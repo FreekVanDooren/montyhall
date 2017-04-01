@@ -77,8 +77,6 @@ public class ShowTest {
 
     @Test
     public void afterFirstPickContestantIsOfferedASecondChoiceAndChoosesTheOtherBox() throws Exception {
-        IntStream.range(0,1000).forEach((i) ->{
-            System.out.println("Iteration " + i);
         contestant = boxes -> {
             assertWinningBoxIsOffered(boxes);
             if (chosenBox == null) {
@@ -92,8 +90,6 @@ public class ShowTest {
 
         assertTrue(outcome.isOtherBoxChosen());
         assertFalse(outcome.isSameBoxChosen());
-        chosenBox = null;
-        });
     }
 
     private void assertWinningBoxIsOffered(List<Box> boxes) {

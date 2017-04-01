@@ -5,8 +5,10 @@ import tv.shows.monty.hall.model.Outcome;
 import tv.shows.monty.hall.model.Summary;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static tv.shows.monty.hall.model.Result.LOSS;
 import static tv.shows.monty.hall.model.Result.WIN;
 
@@ -42,7 +44,8 @@ public class Show {
         System.out.println("==============================================================");
     }
 
-    private List<Box> boxes = asList(new Box(LOSS), new Box(WIN), new Box(LOSS));
+    private static final Box WINNING_BOX = new Box(WIN);
+    private List<Box> boxes = asList(new Box(LOSS), WINNING_BOX, new Box(LOSS));
 
     public Outcome play(Contestable contestable) {
         Box firstChosenBox = contestable.choose(boxes);
@@ -52,12 +55,24 @@ public class Show {
 
     private Box openBoxAndChooseAgain(Contestable contestable, Box chosenBox) {
         return contestable.choose(
-                asList(chosenBox, getABoxThatWasNotChosen(chosenBox)));
+            asList(
+                chosenBox,
+                getABoxThatWasNotChosen(chosenBox)
+            )
+        );
     }
 
     private Box getABoxThatWasNotChosen(Box pickedBox) {
-        return boxes.stream()
-                .filter((box -> box != pickedBox))
-                .findAny().get();
+        return boxes
+                .stream()
+                .filter(box -> box != pickedBox)
+                .filter(box -> box == WINNING_BOX)
+                .findFirst()
+                .orElseGet(() ->
+                    boxes.stream()
+                            .filter(box -> box != pickedBox)
+                            .findFirst()
+                            .get()
+                );
     }
 }
